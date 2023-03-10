@@ -8,19 +8,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CalcTests {
     @Test
     @DisplayName("1 + 1 == 2")
-    void t1(){
+    void t1() {
         assertThat(Calc.run("1 + 1")).isEqualTo(2);
     }
+
     @Test
     @DisplayName("2 + 1 == 3")
-    void t2(){
+    void t2() {
         assertThat(Calc.run("2 + 1")).isEqualTo(3);
     }
+
     @Test
     @DisplayName("2 + 2 == 3")
-    void t3(){
+    void t3() {
         assertThat(Calc.run("2 + 2")).isEqualTo(4);
     }
+
     @Test
     @DisplayName("1000 + 280 == 1280")
     void t4() {
@@ -31,5 +34,15 @@ public class CalcTests {
     @DisplayName("50 - 30 == 20")
     void t5() {
         assertThat(Calc.run("50 - 30")).isEqualTo(20); // 구현
+    }
+    @Test
+    @DisplayName("5 - 3 == 2")
+    void t6() {
+        assertThat(Calc.run("5 - 3")).isEqualTo(2); // 구현
+    }
+    @Test
+    @DisplayName("100 - 20 == 80")
+    void t7() {
+        assertThat(Calc.run("100 - 20")).isEqualTo(80); // 구현
     }
 }
