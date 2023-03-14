@@ -10,6 +10,7 @@ public class Main {
 
 class Calc {
     public static int run(String exp) {
+        exp = stripOuterBrackets(exp);
         // 단일항이 입력되면 바로 리턴
         if ( !exp.contains(" ") ) return Integer.parseInt(exp);
 
@@ -30,7 +31,6 @@ class Calc {
         }
         else if ( needToPlus ) {
             exp = exp.replaceAll("- ", "+ -");
-
             String[] bits = exp.split(" \\+ ");
 
             int sum = 0;
@@ -54,6 +54,13 @@ class Calc {
         }
 
         throw new RuntimeException("올바른 계산식이 아닙니다.");
+    }
+
+    private static String stripOuterBrackets(String exp) {
+        while ( exp.charAt(0) == '(' && exp.charAt(exp.length() -1) ==')'){
+            exp = exp.substring(1, exp.length()-1);
+        }
+        return exp;
     }
 
 
