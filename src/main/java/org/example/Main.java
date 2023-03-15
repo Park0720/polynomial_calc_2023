@@ -10,38 +10,27 @@ public class Main {
 
 class Calc {
     public static int run(String exp) {
-        exp.trim();
+        exp = exp.trim();
         exp = stripOuterBrackets(exp);
         // 단일항이 입력되면 바로 리턴
-        if ( !exp.contains(" ") ) return Integer.parseInt(exp);
+        if (!exp.contains(" ")) return Integer.parseInt(exp);
 
         boolean needToMulti = exp.contains(" * ");
         boolean needToPlus = exp.contains(" + ") || exp.contains(" - ");
         boolean needToCompound = needToMulti && needToPlus;
         boolean needToSplit = exp.contains("(") || exp.contains(")");
 
-        if ( needToSplit){
-            int bracketsCount = 0;
-            int splitPointIndex = -1;
-            for (int i = 0; i<exp.length(); i++){
-                if( exp.charAt(i) == '('){
-                    bracketsCount++;
-                }
-                else if( exp.charAt(i)==')'){
-                    bracketsCount--;
-                }
-                if (bracketsCount ==0){
-                    splitPointIndex =i;
-                    break;
-                }
-            }
-            String firstExp = exp.substring(0, splitPointIndex + 1);
-            String secondExp = exp.substring(splitPointIndex+4);
+        if (needToSplit) {
+            int splitPointIndex = findSplitPointIndex(exp);
 
-            return Calc.run(firstExp) + Calc.run(secondExp);
-        }
+            String firstExp = exp.substring(0, splitPointIndex);
+            String secondExp = exp.substring(splitPointIndex + 1);
 
-        else if ( needToCompound ) {
+            char operationCode = exp.charAt(splitPointIndex);
+
+            exp = Calc.run(firstExp) + " " + operationCode + " " + Calc.run(secondExp);
+            return Calc.run(exp);
+        } else if (needToCompound) {
             String[] bits = exp.split(" \\+ ");
 
             String newExp = Arrays.stream(bits)
@@ -50,8 +39,7 @@ class Calc {
                     .collect(Collectors.joining(" + "));
 
             return run(newExp);
-        }
-        else if ( needToPlus ) {
+        } else if (needToPlus) {
             exp = exp.replaceAll("- ", "+ -");
             String[] bits = exp.split(" \\+ ");
 
@@ -62,8 +50,7 @@ class Calc {
             }
 
             return sum;
-        }
-        else if ( needToMulti ) {
+        } else if (needToMulti) {
             String[] bits = exp.split(" \\* ");
 
             int sum = 1;
@@ -78,11 +65,43 @@ class Calc {
         throw new RuntimeException("올바른 계산식이 아닙니다.");
     }
 
-    private static String stripOuterBrackets(String exp) {
-        while ( exp.charAt(0) == '(' && exp.charAt(exp.length() -1) ==')'){
-            exp = exp.substring(1, exp.length()-1);
+    private static int findSplitPointIndexBy(String exp, char findChar) {
+        int bracketsCount = 0;
+
+        for (int i = 0; i < exp.length(); i++) {
+            char c = exp.charAt(i);
+
+            if ( c == '(' ) {
+                bracketsCount++;
+            }
+            else if ( c == ')' ) {
+                bracketsCount--;
+            }
+            else if ( c == findChar ) {
+                if ( bracketsCount == 0 ) return i;
+            }
         }
-        return exp;
+
+        return -1;
+    }
+
+    private static int findSplitPointIndex(String exp) {
+        int index = findSplitPointIndexBy(exp, '+');
+
+        if (index >= 0) return index;
+
+        return findSplitPointIndexBy(exp, '*');
+    }
+
+    private static String stripOuterBrackets(String exp) {
+        int outerBracketsCount = 0;
+
+        while (exp.charAt(outerBracketsCount) == '(' && exp.charAt(exp.length() - 1 - outerBracketsCount) == ')') {
+            outerBracketsCount++;
+        }
+
+        if (outerBracketsCount == 0) return exp;
+        return exp.substring(outerBracketsCount, exp.length() - outerBracketsCount);
     }
 
 
